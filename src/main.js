@@ -15,6 +15,8 @@ class DailySudokuApp {
     this.controls = null;
     this.numberPad = null;
     this.actions = null;
+    this.initialDate = null;
+    this.dateCheckInterval = null;
   }
 
   /**
@@ -22,6 +24,7 @@ class DailySudokuApp {
    */
   async init() {
     const dateString = getTodayDateString();
+    this.initialDate = dateString;
 
     // Generate daily puzzles
     this.puzzles = generateDailyPuzzles(dateString);
@@ -66,6 +69,9 @@ class DailySudokuApp {
 
     // Add keyboard support
     this.setupKeyboardControls();
+
+    // Start checking for new day every hour
+    this.startDateCheck();
   }
 
   /**
@@ -174,6 +180,53 @@ class DailySudokuApp {
         this.game.selectCell(newRow, newCol);
       }
     });
+  }
+
+  /**
+   * Start checking for new day every hour
+   */
+  startDateCheck() {
+    // Check every hour (3600000 ms)
+    this.dateCheckInterval = setInterval(() => {
+      const currentDate = getTodayDateString();
+      if (currentDate !== this.initialDate) {
+        this.showNewPuzzleButton();
+      }
+    }, 3600000);
+  }
+
+  /**
+   * Show button to load new puzzle
+   */
+  showNewPuzzleButton() {
+    // Only show once
+    if (document.getElementById('new-puzzle-banner')) return;
+
+    const banner = document.createElement('div');
+    banner.id = 'new-puzzle-banner';
+    banner.className = 'fixed top-0 left-0 right-0 bg-primary text-primary-foreground py-3 px-4 shadow-lg z-50 text-center';
+    banner.innerHTML = `
+      <div class="max-w-4xl mx-auto flex items-center justify-center gap-4 flex-wrap">
+        <span class="font-semibold">🎉 A new daily puzzle is available!</span>
+        <button
+          id="refresh-puzzle-btn"
+          class="px-4 py-2 bg-white text-primary rounded-md font-medium hover:bg-gray-100 transition-colors"
+        >
+          Load New Puzzle
+        </button>
+      </div>
+    `;
+
+    document.body.prepend(banner);
+
+    document.getElementById('refresh-puzzle-btn').addEventListener('click', () => {
+      location.reload();
+    });
+
+    // Stop checking once we've shown the button
+    if (this.dateCheckInterval) {
+      clearInterval(this.dateCheckInterval);
+    }
   }
 }
 
