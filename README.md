@@ -1,6 +1,7 @@
 # Daily Sudoku
 
 A beautiful, daily Sudoku puzzle game with multiple difficulty levels, built with vanilla JavaScript and Tailwind CSS.
+[Play now !](https://romanetvin.github.io/daily-sudoku/)
 
 ## Features
 
@@ -82,7 +83,7 @@ This project is configured for automatic deployment to GitHub Pages using GitHub
 3. Under "Build and deployment", select "GitHub Actions" as the source
 4. Push to the `main` branch to trigger deployment
 
-The site will be available at: `https://[username].github.io/daily-sudoku/`
+The site will be available at: `https://romanetvin.github.io/daily-sudoku/`
 
 ### Manual Deployment
 

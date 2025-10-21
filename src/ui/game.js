@@ -34,12 +34,12 @@ export class SudokuGame {
     this.cells = [];
 
     const grid = document.createElement('div');
-    grid.className = 'inline-block bg-border p-1 rounded-lg';
+    grid.className = 'grid grid-cols-3 gap-1 bg-border p-1 rounded-lg w-fit';
 
     for (let boxRow = 0; boxRow < 3; boxRow++) {
       for (let boxCol = 0; boxCol < 3; boxCol++) {
         const box = document.createElement('div');
-        box.className = 'inline-grid grid-cols-3 gap-0 bg-background m-0.5';
+        box.className = 'grid grid-cols-3 gap-0 bg-background';
 
         for (let cellRow = 0; cellRow < 3; cellRow++) {
           for (let cellCol = 0; cellCol < 3; cellCol++) {
@@ -65,12 +65,13 @@ export class SudokuGame {
     const cell = document.createElement('div');
     const value = this.showingSolution ? this.solution[row][col] : this.board[row][col];
     const isInitial = this.initialBoard[row][col] !== 0;
+    const isSelected = this.selectedCell && this.selectedCell.row === row && this.selectedCell.col === col;
 
     cell.className = `
       w-12 h-12 flex items-center justify-center text-lg font-semibold
-      border border-border cursor-pointer transition-colors
+      cursor-pointer transition-all
       ${isInitial ? 'bg-muted text-foreground font-bold' : 'bg-background text-primary hover:bg-accent'}
-      ${this.selectedCell && this.selectedCell.row === row && this.selectedCell.col === col ? 'ring-2 ring-primary' : ''}
+      ${isSelected ? 'border-2 border-primary shadow-lg' : 'border border-border'}
     `;
 
     if (value !== 0) {
