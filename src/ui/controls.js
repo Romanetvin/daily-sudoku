@@ -8,7 +8,7 @@ export class GameControls {
   constructor(container, onDifficultyChange) {
     this.container = container;
     this.onDifficultyChange = onDifficultyChange;
-    this.currentDifficulty = 'easy';
+    this.currentDifficulty = 'extreme';
   }
 
   /**

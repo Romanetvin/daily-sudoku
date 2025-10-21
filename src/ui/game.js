@@ -69,9 +69,9 @@ export class SudokuGame {
 
     cell.className = `
       w-12 h-12 flex items-center justify-center text-lg font-semibold
-      cursor-pointer transition-all
+      cursor-pointer transition-all border border-border
       ${isInitial ? 'bg-muted text-foreground font-bold' : 'bg-background text-primary hover:bg-accent'}
-      ${isSelected ? 'border-2 border-primary shadow-lg' : 'border border-border'}
+      ${isSelected ? 'relative z-10 !border-2 !border-primary shadow-lg' : ''}
     `;
 
     if (value !== 0) {

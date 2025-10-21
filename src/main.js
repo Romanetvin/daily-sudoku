@@ -10,7 +10,7 @@ import { GameControls, NumberPad, GameActions } from './ui/controls.js';
 class DailySudokuApp {
   constructor() {
     this.puzzles = null;
-    this.currentDifficulty = 'easy';
+    this.currentDifficulty = 'extreme';
     this.game = null;
     this.controls = null;
     this.numberPad = null;
