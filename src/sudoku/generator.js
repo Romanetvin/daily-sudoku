@@ -145,96 +145,33 @@ export const DIFFICULTY_CONFIGS = {
 
 /**
  * Generate daily puzzles for all difficulty levels
- * Each harder difficulty is a subset of the easier one
+ * Each difficulty has completely independent solution and clues
  */
 export function generateDailyPuzzles(dateString) {
   // Convert date string to seed number
-  const seed = dateString.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const baseSeed = dateString.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
 
-  // Generate one complete board
-  const completeBoard = generateCompleteBoard(seed);
-
-  // Generate Easy puzzle first (most clues)
-  const easyPuzzle = createPuzzle(completeBoard, DIFFICULTY_CONFIGS.easy.clues, seed);
-
-  // Create nested difficulty puzzles
-  const puzzles = {
-    easy: {
-      puzzle: easyPuzzle,
-      solution: completeBoard.map(row => [...row]),
-      clues: DIFFICULTY_CONFIGS.easy.clues,
-      name: DIFFICULTY_CONFIGS.easy.name
-    }
+  const puzzles = {};
+  const difficultySeeds = {
+    easy: baseSeed + 100,
+    medium: baseSeed + 200,
+    hard: baseSeed + 300,
+    extreme: baseSeed + 400
   };
 
-  // Generate Medium by removing clues from Easy
-  puzzles.medium = {
-    puzzle: removeCluesFromPuzzle(easyPuzzle, DIFFICULTY_CONFIGS.medium.clues, seed + 1),
-    solution: completeBoard.map(row => [...row]),
-    clues: DIFFICULTY_CONFIGS.medium.clues,
-    name: DIFFICULTY_CONFIGS.medium.name
-  };
+  // Generate completely independent puzzle for each difficulty
+  for (const [difficulty, config] of Object.entries(DIFFICULTY_CONFIGS)) {
+    const seed = difficultySeeds[difficulty];
+    const completeBoard = generateCompleteBoard(seed);
+    const puzzle = createPuzzle(completeBoard, config.clues, seed);
 
-  // Generate Hard by removing clues from Medium
-  puzzles.hard = {
-    puzzle: removeCluesFromPuzzle(puzzles.medium.puzzle, DIFFICULTY_CONFIGS.hard.clues, seed + 2),
-    solution: completeBoard.map(row => [...row]),
-    clues: DIFFICULTY_CONFIGS.hard.clues,
-    name: DIFFICULTY_CONFIGS.hard.name
-  };
-
-  // Generate Extreme by removing clues from Hard
-  puzzles.extreme = {
-    puzzle: removeCluesFromPuzzle(puzzles.hard.puzzle, DIFFICULTY_CONFIGS.extreme.clues, seed + 3),
-    solution: completeBoard.map(row => [...row]),
-    clues: DIFFICULTY_CONFIGS.extreme.clues,
-    name: DIFFICULTY_CONFIGS.extreme.name
-  };
+    puzzles[difficulty] = {
+      puzzle: puzzle,
+      solution: completeBoard,
+      clues: config.clues,
+      name: config.name
+    };
+  }
 
   return puzzles;
-}
-
-/**
- * Remove clues from an existing puzzle to reach target clue count
- */
-function removeCluesFromPuzzle(puzzle, targetClues, seed) {
-  const random = new SeededRandom(seed);
-  const board = puzzle.map(row => [...row]);
-
-  // Count current clues
-  let currentClues = 0;
-  const cluePositions = [];
-  for (let i = 0; i < 9; i++) {
-    for (let j = 0; j < 9; j++) {
-      if (board[i][j] !== 0) {
-        currentClues++;
-        cluePositions.push([i, j]);
-      }
-    }
-  }
-
-  const cluestoRemove = currentClues - targetClues;
-  if (cluestoRemove <= 0) return board;
-
-  // Shuffle clue positions
-  const shuffledPositions = shuffle(cluePositions, random);
-
-  // Remove clues while maintaining unique solution
-  let removed = 0;
-  for (const [row, col] of shuffledPositions) {
-    if (removed >= cluestoRemove) break;
-
-    const backup = board[row][col];
-    board[row][col] = 0;
-
-    // Check if puzzle still has unique solution
-    const testBoard = board.map(r => [...r]);
-    if (hasUniqueSolution(testBoard)) {
-      removed++;
-    } else {
-      board[row][col] = backup; // Restore if not unique
-    }
-  }
-
-  return board;
 }
