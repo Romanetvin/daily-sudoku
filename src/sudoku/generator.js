@@ -93,8 +93,34 @@ export function generateCompleteBoard(seed) {
 }
 
 /**
+ * Find all naked singles (cells with only one possible value)
+ */
+function findNakedSingles(board) {
+  const nakedSingles = [];
+
+  for (let row = 0; row < 9; row++) {
+    for (let col = 0; col < 9; col++) {
+      if (board[row][col] !== 0) continue; // Skip filled cells
+
+      const possibleValues = [];
+      for (let num = 1; num <= 9; num++) {
+        if (isValid(board, row, col, num)) {
+          possibleValues.push(num);
+        }
+      }
+
+      if (possibleValues.length === 1) {
+        nakedSingles.push({ row, col, value: possibleValues[0] });
+      }
+    }
+  }
+
+  return nakedSingles;
+}
+
+/**
  * Remove numbers from board to create a puzzle
- * Ensures the puzzle has a unique solution
+ * Ensures the puzzle has a unique solution and at least one naked single
  */
 export function createPuzzle(completeBoard, cluesCount, seed) {
   const random = new SeededRandom(seed + 1000); // Different seed for removal
@@ -121,12 +147,14 @@ export function createPuzzle(completeBoard, cluesCount, seed) {
     const backup = board[row][col];
     board[row][col] = 0;
 
-    // Check if puzzle still has unique solution
+    // Check if puzzle still has unique solution AND at least one naked single
     const testBoard = board.map(r => [...r]);
-    if (hasUniqueSolution(testBoard)) {
+    const nakedSingles = findNakedSingles(testBoard);
+
+    if (hasUniqueSolution(testBoard) && nakedSingles.length > 0) {
       removed++;
     } else {
-      board[row][col] = backup; // Restore if not unique
+      board[row][col] = backup; // Restore if not unique or no naked singles
     }
   }
 
