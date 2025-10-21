@@ -25,7 +25,8 @@ export class GameControls {
       { id: 'easy', label: 'Easy', color: 'bg-green-500 hover:bg-green-600' },
       { id: 'medium', label: 'Medium', color: 'bg-yellow-500 hover:bg-yellow-600' },
       { id: 'hard', label: 'Hard', color: 'bg-orange-500 hover:bg-orange-600' },
-      { id: 'extreme', label: 'Extreme', color: 'bg-red-500 hover:bg-red-600' }
+      { id: 'extreme', label: 'Extreme', color: 'bg-red-500 hover:bg-red-600' },
+      { id: 'impossible', label: 'Impossible', color: 'bg-black hover:bg-gray-800' }
     ];
 
     difficulties.forEach(({ id, label, color }) => {

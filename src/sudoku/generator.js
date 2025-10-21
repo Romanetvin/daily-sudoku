@@ -140,7 +140,8 @@ export const DIFFICULTY_CONFIGS = {
   easy: { clues: 45, name: 'Easy' },
   medium: { clues: 35, name: 'Medium' },
   hard: { clues: 30, name: 'Hard' },
-  extreme: { clues: 25, name: 'Extreme' }
+  extreme: { clues: 25, name: 'Extreme' },
+  impossible: { clues: 20, name: 'Impossible' }
 };
 
 /**
@@ -156,7 +157,8 @@ export function generateDailyPuzzles(dateString) {
     easy: baseSeed + 100,
     medium: baseSeed + 200,
     hard: baseSeed + 300,
-    extreme: baseSeed + 400
+    extreme: baseSeed + 400,
+    impossible: baseSeed + 500
   };
 
   // Generate completely independent puzzle for each difficulty
