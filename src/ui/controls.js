@@ -96,10 +96,11 @@ export class NumberPad {
 }
 
 export class GameActions {
-  constructor(container, onReset, onToggleSolution) {
+  constructor(container, onReset, onToggleSolution, onCheckSolution) {
     this.container = container;
     this.onReset = onReset;
     this.onToggleSolution = onToggleSolution;
+    this.onCheckSolution = onCheckSolution;
     this.showingSolution = false;
   }
 
@@ -111,6 +112,12 @@ export class GameActions {
 
     const actions = document.createElement('div');
     actions.className = 'flex gap-4 justify-center flex-wrap';
+
+    const checkButton = createButton(
+      'Check Solution',
+      'bg-primary text-primary-foreground hover:bg-primary/90',
+      () => this.onCheckSolution()
+    );
 
     const resetButton = createButton(
       'Reset',
@@ -127,6 +134,7 @@ export class GameActions {
       }
     );
 
+    actions.appendChild(checkButton);
     actions.appendChild(resetButton);
     actions.appendChild(solutionButton);
 

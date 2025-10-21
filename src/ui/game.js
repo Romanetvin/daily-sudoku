@@ -3,6 +3,7 @@
  */
 
 import { isValid } from '../sudoku/validator.js';
+import { showSuccessPopup } from './components.js';
 
 export class SudokuGame {
   constructor(container) {
@@ -13,6 +14,7 @@ export class SudokuGame {
     this.selectedCell = null;
     this.showingSolution = false;
     this.cells = [];
+    this.verificationResults = null; // Stores verification state for each cell
   }
 
   /**
@@ -23,6 +25,7 @@ export class SudokuGame {
     this.solution = solution.map(row => [...row]);
     this.initialBoard = puzzle.map(row => [...row]);
     this.showingSolution = false;
+    this.verificationResults = null;
     this.render();
   }
 
@@ -67,10 +70,19 @@ export class SudokuGame {
     const isInitial = this.initialBoard[row][col] !== 0;
     const isSelected = this.selectedCell && this.selectedCell.row === row && this.selectedCell.col === col;
 
+    // Check verification status
+    let textColorClass = 'text-primary';
+    if (!isInitial && this.verificationResults && this.verificationResults[row][col] !== null) {
+      textColorClass = this.verificationResults[row][col] ? 'text-green-600 dark:text-green-500' : 'text-red-600 dark:text-red-500';
+    } else if (isInitial) {
+      textColorClass = 'text-foreground';
+    }
+
     cell.className = `
       w-12 h-12 flex items-center justify-center text-lg font-semibold
       cursor-pointer transition-all border border-border
-      ${isInitial ? 'bg-muted text-foreground font-bold' : 'bg-background text-primary hover:bg-accent'}
+      ${isInitial ? 'bg-muted font-bold' : 'bg-background hover:bg-accent'}
+      ${textColorClass}
       ${isSelected ? 'relative z-10 !border-2 !border-primary shadow-lg' : ''}
     `;
 
@@ -107,6 +119,7 @@ export class SudokuGame {
     if (this.initialBoard[row][col] !== 0) return; // Can't modify initial cells
 
     this.board[row][col] = num;
+    this.verificationResults = null; // Clear verification when user makes changes
     this.render();
     this.checkCompletion();
   }
@@ -121,6 +134,7 @@ export class SudokuGame {
     if (this.initialBoard[row][col] !== 0) return;
 
     this.board[row][col] = 0;
+    this.verificationResults = null; // Clear verification when user makes changes
     this.render();
   }
 
@@ -164,8 +178,57 @@ export class SudokuGame {
    */
   onComplete() {
     setTimeout(() => {
-      alert('🎉 Congratulations! You solved the puzzle!');
+      showSuccessPopup('You solved the puzzle correctly!');
     }, 100);
+  }
+
+  /**
+   * Verify the user's solution
+   */
+  verifySolution() {
+    // Initialize verification results
+    this.verificationResults = Array(9).fill(null).map(() => Array(9).fill(null));
+
+    let allCorrect = true;
+    let hasAnyFilledCell = false;
+
+    // Check each cell
+    for (let i = 0; i < 9; i++) {
+      for (let j = 0; j < 9; j++) {
+        // Skip initial cells
+        if (this.initialBoard[i][j] !== 0) {
+          this.verificationResults[i][j] = null;
+          continue;
+        }
+
+        // Check if filled
+        if (this.board[i][j] !== 0) {
+          hasAnyFilledCell = true;
+          this.verificationResults[i][j] = this.board[i][j] === this.solution[i][j];
+          if (!this.verificationResults[i][j]) {
+            allCorrect = false;
+          }
+        }
+      }
+    }
+
+    // Re-render to show colors
+    this.render();
+
+    // If all filled cells are correct and puzzle is complete, show success
+    if (allCorrect && hasAnyFilledCell && this.checkCompletion()) {
+      setTimeout(() => {
+        showSuccessPopup('You solved the puzzle correctly!');
+      }, 100);
+    }
+  }
+
+  /**
+   * Clear verification results
+   */
+  clearVerification() {
+    this.verificationResults = null;
+    this.render();
   }
 
   /**
@@ -175,6 +238,7 @@ export class SudokuGame {
     this.board = this.initialBoard.map(row => [...row]);
     this.selectedCell = null;
     this.showingSolution = false;
+    this.verificationResults = null;
     this.render();
   }
 

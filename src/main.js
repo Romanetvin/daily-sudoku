@@ -56,7 +56,8 @@ class DailySudokuApp {
     this.actions = new GameActions(
       actionsContainer,
       () => this.game.reset(),
-      () => this.game.toggleSolution()
+      () => this.game.toggleSolution(),
+      () => this.game.verifySolution()
     );
 
     // Render UI
