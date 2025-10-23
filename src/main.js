@@ -56,7 +56,6 @@ class DailySudokuApp {
     this.actions = new GameActions(
       actionsContainer,
       () => this.game.reset(),
-      () => this.game.toggleSolution(),
       () => this.game.verifySolution()
     );
 
@@ -140,7 +139,6 @@ class DailySudokuApp {
   loadPuzzle() {
     const puzzleData = this.puzzles[this.currentDifficulty];
     this.game.init(puzzleData.puzzle, puzzleData.solution);
-    this.actions.updateSolutionState(false);
   }
 
   /**

@@ -12,7 +12,6 @@ export class SudokuGame {
     this.solution = null;
     this.initialBoard = null;
     this.selectedCell = null;
-    this.showingSolution = false;
     this.cells = [];
     this.verificationResults = null; // Stores verification state for each cell
   }
@@ -24,7 +23,6 @@ export class SudokuGame {
     this.board = puzzle.map(row => [...row]);
     this.solution = solution.map(row => [...row]);
     this.initialBoard = puzzle.map(row => [...row]);
-    this.showingSolution = false;
     this.verificationResults = null;
     this.render();
   }
@@ -66,7 +64,7 @@ export class SudokuGame {
    */
   createCell(row, col) {
     const cell = document.createElement('div');
-    const value = this.showingSolution ? this.solution[row][col] : this.board[row][col];
+    const value = this.board[row][col];
     const isInitial = this.initialBoard[row][col] !== 0;
     const isSelected = this.selectedCell && this.selectedCell.row === row && this.selectedCell.col === col;
 
@@ -90,9 +88,7 @@ export class SudokuGame {
       cell.textContent = value;
     }
 
-    if (!this.showingSolution) {
-      cell.addEventListener('click', () => this.selectCell(row, col));
-    }
+    cell.addEventListener('click', () => this.selectCell(row, col));
 
     return cell;
   }
@@ -101,8 +97,8 @@ export class SudokuGame {
    * Select a cell
    */
   selectCell(row, col) {
-    if (this.initialBoard[row][col] !== 0 || this.showingSolution) {
-      return; // Can't select initial cells or when showing solution
+    if (this.initialBoard[row][col] !== 0) {
+      return; // Can't select initial cells
     }
 
     this.selectedCell = { row, col };
@@ -113,7 +109,7 @@ export class SudokuGame {
    * Set value in selected cell
    */
   setValue(num) {
-    if (!this.selectedCell || this.showingSolution) return;
+    if (!this.selectedCell) return;
 
     const { row, col } = this.selectedCell;
     if (this.initialBoard[row][col] !== 0) return; // Can't modify initial cells
@@ -128,7 +124,7 @@ export class SudokuGame {
    * Clear selected cell
    */
   clearCell() {
-    if (!this.selectedCell || this.showingSolution) return;
+    if (!this.selectedCell) return;
 
     const { row, col } = this.selectedCell;
     if (this.initialBoard[row][col] !== 0) return;
@@ -136,16 +132,6 @@ export class SudokuGame {
     this.board[row][col] = 0;
     this.verificationResults = null; // Clear verification when user makes changes
     this.render();
-  }
-
-  /**
-   * Toggle solution display
-   */
-  toggleSolution() {
-    this.showingSolution = !this.showingSolution;
-    this.selectedCell = null;
-    this.render();
-    return this.showingSolution;
   }
 
   /**
@@ -237,7 +223,6 @@ export class SudokuGame {
   reset() {
     this.board = this.initialBoard.map(row => [...row]);
     this.selectedCell = null;
-    this.showingSolution = false;
     this.verificationResults = null;
     this.render();
   }

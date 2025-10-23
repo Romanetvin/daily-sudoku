@@ -97,12 +97,10 @@ export class NumberPad {
 }
 
 export class GameActions {
-  constructor(container, onReset, onToggleSolution, onCheckSolution) {
+  constructor(container, onReset, onCheckSolution) {
     this.container = container;
     this.onReset = onReset;
-    this.onToggleSolution = onToggleSolution;
     this.onCheckSolution = onCheckSolution;
-    this.showingSolution = false;
   }
 
   /**
@@ -126,27 +124,9 @@ export class GameActions {
       () => this.onReset()
     );
 
-    const solutionButton = createButton(
-      this.showingSolution ? 'Hide Solution' : 'Show Solution',
-      'bg-accent text-accent-foreground hover:bg-accent/80',
-      () => {
-        this.showingSolution = this.onToggleSolution();
-        this.render();
-      }
-    );
-
     actions.appendChild(checkButton);
     actions.appendChild(resetButton);
-    actions.appendChild(solutionButton);
 
     this.container.appendChild(actions);
-  }
-
-  /**
-   * Update solution button state
-   */
-  updateSolutionState(showing) {
-    this.showingSolution = showing;
-    this.render();
   }
 }
